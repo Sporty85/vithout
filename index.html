@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vithout — Pflanzliches Döner-Fleisch aus Aarau</title>
+  <meta name="description" content="Vithout ist die pflanzliche Alternative zu Kebab und Döner-Fleisch. Handgefertigter Seitan aus Aarau — frisch, lokal, überzeugend." />
+  <meta name="theme-color" content="#004225" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <style>
+    /* ── Brand palette (from SKILL.md) ───────────────────────────── */
+    :root {
+      --clr-green:      #004225;
+      --clr-green-dk:   #002e1a;
+      --clr-green-lt:   #0a5c34;
+      --clr-green-mid:  #1a6b40;
+      --clr-beige:      #F5F5DC;
+      --clr-beige-dk:   #eae9c8;
+      --clr-gold:       #FFB000;
+      --clr-gold-dk:    #e09500;
+      --clr-peach:      #FFCF9D;
+      --clr-dark:       #1a1a10;
+      --clr-white:      #FFFFFF;
+      --clr-text:       #2a2a1a;
+      --clr-text-light: #5a5a3a;
+
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-heading: 'Barlow Condensed', sans-serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+
+      --max-w:        1200px;
+      --nav-h:        80px;
+      --section-pad:  clamp(4rem, 8vw, 8rem);
+      --t:            0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── Reset ───────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
+    body {
+      background: var(--clr-beige);
+      color: var(--clr-text);
+      font-family: var(--font-body);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body.nav-open { overflow: hidden; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    address { font-style: normal; }
+
+    /* ── Helpers ─────────────────────────────────────────────────── */
+    .container { max-width: var(--max-w); margin: 0 auto; }
+    .section    { padding: var(--section-pad) clamp(1.25rem, 4vw, 2.5rem); }
+
+    .label {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+    .body-lg {
+      font-size: clamp(1rem, 1.4vw, 1.1rem);
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--clr-gold);
+      margin-bottom: 1.75rem;
+    }
+    .section-tag::before {
+      content: '';
+      display: block;
+      width: 28px; height: 2px;
+      background: var(--clr-gold);
+      border-radius: 1px;
+      flex-shrink: 0;
+    }
+
+    /* ── Headings ────────────────────────────────────────────────── */
+    .h-display {
+      font-family: var(--font-display);
+      font-size: clamp(4.5rem, 12vw, 11rem);
+      line-height: 0.88;
+      letter-spacing: 0.01em;
+    }
+    .h-xl {
+      font-family: var(--font-heading);
+      font-weight: 900;
+      font-size: clamp(2rem, 4.5vw, 3.25rem);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1.05;
+    }
+    .h-lg {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Buttons ─────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      padding: 0.9rem 2.1rem;
+      font-family: var(--font-heading);
+      font-weight: 700; font-size: 0.82rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      border-radius: 2px;
+      transition: all var(--t);
+      cursor: pointer; border: 2px solid transparent;
+      white-space: nowrap;
+    }
+    .btn--gold {
+      background: var(--clr-gold);
+      color: var(--clr-dark);
+    }
+    .btn--gold:hover {
+      background: var(--clr-gold-dk);
+      box-shadow: 0 6px 24px rgba(255,176,0,0.35);
+      transform: translateY(-2px);
+    }
+    .btn--outline-white {
+      border-color: rgba(255,255,255,0.45);
+      color: var(--clr-white);
+    }
+    .btn--outline-white:hover {
+      border-color: var(--clr-white);
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+    .btn--outline-green {
+      border-color: rgba(0,66,37,0.4);
+      color: var(--clr-green);
+    }
+    .btn--outline-green:hover {
+      border-color: var(--clr-green);
+      background: rgba(0,66,37,0.06);
+      transform: translateY(-2px);
+    }
+    .btn--sm { padding: 0.55rem 1.3rem; font-size: 0.72rem; }
+
+    /* ── Pills ───────────────────────────────────────────────────── */
+    .pill {
+      display: inline-flex; align-items: center;
+      padding: 0.38rem 1rem;
+      border: 1px solid rgba(0,66,37,0.25);
+      border-radius: 100px;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--clr-green);
+      background: rgba(0,66,37,0.06);
+      transition: background var(--t), border-color var(--t);
+    }
+    .pill:hover {
+      background: rgba(0,66,37,0.12);
+      border-color: rgba(0,66,37,0.4);
+    }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 2rem; }
+
+    /* ── Pill variant for green sections ─────────────────────────── */
+    .pill--light {
+      border-color: rgba(255,255,255,0.3);
+      color: var(--clr-peach);
+      background: rgba(255,255,255,0.08);
+    }
+    .pill--light:hover {
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    /* ── Scroll-reveal ───────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1),
+                  transform 0.7s cubic-bezier(0.4,0,0.2,1);
+    }
+    .reveal.revealed { opacity: 1; transform: translateY(0); }
+    .reveal[data-delay="1"] { transition-delay: 0.1s; }
+    .reveal[data-delay="2"] { transition-delay: 0.22s; }
+    .reveal[data-delay="3"] { transition-delay: 0.36s; }
+    .reveal[data-delay="4"] { transition-delay: 0.5s; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       NAVBAR
+    ════════════════════════════════════════════════════════════════ */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000;
+      height: var(--nav-h);
+      background: var(--clr-green);
+      transition: box-shadow var(--t);
+    }
+    .navbar.scrolled {
+      box-shadow: 0 2px 40px rgba(0,0,0,0.25);
+    }
+    .navbar__inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 100%;
+      padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+      max-width: var(--max-w); margin: 0 auto;
+    }
+
+    /* Logo — big and visible */
+    .navbar__logo {
+      display: flex; align-items: center; gap: 0.75rem;
+      flex-shrink: 0;
+    }
+    .navbar__logo img {
+      height: 60px;
+      width: auto;
+      filter: brightness(0) invert(1) drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+      transition: transform var(--t), filter var(--t);
+    }
+    .navbar__logo:hover img {
+      transform: scale(1.05);
+      filter: brightness(0) invert(1) drop-shadow(0 0 14px rgba(255,176,0,0.6));
+    }
+
+    .navbar__links {
+      display: none; gap: 2.25rem; align-items: center;
+    }
+    @media (min-width: 768px) { .navbar__links { display: flex; } }
+    .navbar__links a {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.7);
+      position: relative;
+      transition: color var(--t);
+    }
+    .navbar__links a::after {
+      content: ''; position: absolute;
+      bottom: -5px; left: 0; right: 0; height: 2px;
+      background: var(--clr-gold);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform var(--t);
+    }
+    .navbar__links a:hover { color: var(--clr-white); }
+    .navbar__links a:hover::after { transform: scaleX(1); }
+
+    /* Hamburger */
+    .navbar__hamburger {
+      display: flex; flex-direction: column;
+      justify-content: center; gap: 5px;
+      cursor: pointer; background: none; border: none; padding: 10px;
+    }
+    @media (min-width: 768px) { .navbar__hamburger { display: none; } }
+    .navbar__hamburger span {
+      display: block; width: 26px; height: 2px;
+      background: rgba(255,255,255,0.8); border-radius: 2px;
+      transition: transform 0.32s ease, opacity 0.32s ease;
+    }
+    .navbar__hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .navbar__hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .navbar__hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+    /* Mobile nav */
+    @media (max-width: 767px) {
+      .navbar__nav {
+        position: fixed; top: var(--nav-h); left: 0; right: 0;
+        background: var(--clr-green-dk);
+        border-bottom: 3px solid var(--clr-gold);
+        padding: 1.5rem clamp(1.25rem,4vw,2.5rem) 2.5rem;
+        transform: translateY(-110%); opacity: 0;
+        transition: transform 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.38s;
+        pointer-events: none; z-index: 999;
+      }
+      .navbar__nav.open {
+        transform: translateY(0); opacity: 1; pointer-events: all;
+      }
+      .navbar__links {
+        display: flex; flex-direction: column; gap: 0;
+      }
+      .navbar__links li { border-bottom: 1px solid rgba(255,255,255,0.08); }
+      .navbar__links a {
+        display: block; padding: 1rem 0;
+        font-size: 1.05rem; color: rgba(255,255,255,0.8);
+      }
+      .navbar__links a::after { display: none; }
+      .navbar__links a:hover { color: var(--clr-gold); }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       HERO — full-width centered, flyer-bg.png background
+    ════════════════════════════════════════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100dvh;
+      min-height: 100vh;
+      padding-top: var(--nav-h);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    /* Background photo */
+    .hero__bg {
+      position: absolute; inset: 0;
+      z-index: 0;
+    }
+    .hero__bg img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center center;
+    }
+    /* Dark green overlay for legibility */
+    .hero__bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(0,46,26,0.88) 0%,
+        rgba(0,66,37,0.75) 40%,
+        rgba(0,46,26,0.82) 100%
+      );
+    }
+
+    .hero__content {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: clamp(2rem,5vw,4rem) clamp(1.25rem,5vw,4rem);
+      max-width: 900px;
+    }
+
+    /* Large logo centered in hero */
+    .hero__logo {
+      display: block; margin-bottom: 2rem;
+    }
+    .hero__logo img {
+      height: clamp(80px, 12vw, 130px);
+      width: auto;
+      filter: brightness(0) invert(1) drop-shadow(0 4px 16px rgba(0,0,0,0.4));
+    }
+
+    .hero__eyebrow {
+      color: var(--clr-gold);
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+    }
+    .hero__eyebrow::before,
+    .hero__eyebrow::after {
+      content: ''; display: inline-block;
+      width: 28px; height: 2px;
+      background: var(--clr-gold); border-radius: 1px; flex-shrink: 0;
+    }
+
+    .hero__headline {
+      color: var(--clr-white);
+      margin-bottom: 1.5rem;
+      text-shadow: 0 4px 40px rgba(0,0,0,0.5);
+    }
+    .hero__headline-accent { color: var(--clr-gold); }
+
+    .hero__tagline {
+      font-family: var(--font-heading);
+      font-weight: 900;
+      font-size: clamp(0.9rem, 1.8vw, 1.2rem);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: rgba(255,207,157,0.6);
+      margin-bottom: 2rem;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.5rem;
+    }
+    .hero__tagline span:last-child { color: var(--clr-gold); }
+
+    .hero__desc {
+      color: rgba(255,255,255,0.65);
+      max-width: 50ch;
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    .hero__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+
+    /* Scroll indicator */
+    .hero__scroll {
+      position: absolute; bottom: 2rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column; align-items: center; gap: 0.4rem;
+      color: rgba(255,255,255,0.3);
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+      z-index: 2;
+    }
+    .hero__scroll-line {
+      width: 1px; height: 36px;
+      background: linear-gradient(to bottom, rgba(255,176,0,0.6), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity:0.4; transform:scaleY(1); }
+      50% { opacity:1; transform:scaleY(1.2); }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       STRIP — full-width photo banner between sections
+    ════════════════════════════════════════════════════════════════ */
+    .photo-strip {
+      position: relative;
+      height: clamp(200px, 30vw, 360px);
+      overflow: hidden;
+    }
+    .photo-strip img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center 55%;
+      display: block;
+    }
+    .photo-strip__overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(0,66,37,0.72) 0%,
+        rgba(0,66,37,0.2) 40%,
+        rgba(0,66,37,0.2) 60%,
+        rgba(0,66,37,0.72) 100%
+      );
+      display: flex; align-items: center; justify-content: center;
+    }
+    .photo-strip__text {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 7vw, 6rem);
+      color: var(--clr-white);
+      letter-spacing: 0.08em;
+      text-align: center;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+    }
+    .photo-strip__text em {
+      color: var(--clr-gold);
+      font-style: normal;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       PRODUKT — beige section
+    ════════════════════════════════════════════════════════════════ */
+    .produkt { background: var(--clr-beige); }
+    .produkt__inner {
+      display: grid; gap: clamp(3rem,6vw,6rem);
+      align-items: center;
+    }
+    @media (min-width: 1024px) {
+      .produkt__inner { grid-template-columns: 1fr 1fr; }
+    }
+    .produkt__title { color: var(--clr-green); margin-bottom: 1.5rem; }
+    .produkt__title span { color: var(--clr-gold); }
+    .produkt__body { display: flex; flex-direction: column; gap: 1.25rem; }
+    .produkt__body .body-lg { color: var(--clr-text-light); }
+
+    /* Photo card with overlap effect */
+    .produkt__visual {
+      position: relative;
+    }
+    .produkt__img-wrap {
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 12px 60px rgba(0,66,37,0.18);
+      aspect-ratio: 4/3;
+    }
+    .produkt__img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+      transition: transform 0.8s ease;
+    }
+    .produkt__img-wrap:hover img { transform: scale(1.04); }
+
+    /* Green accent block behind image */
+    .produkt__visual::before {
+      content: '';
+      position: absolute;
+      top: -1.25rem; right: -1.25rem;
+      width: 55%; height: 55%;
+      background: var(--clr-green);
+      border-radius: 4px;
+      z-index: -1;
+    }
+    /* Gold accent bottom-left */
+    .produkt__visual::after {
+      content: '';
+      position: absolute;
+      bottom: -1rem; left: -1rem;
+      width: 40%; height: 40%;
+      background: var(--clr-gold);
+      opacity: 0.25;
+      border-radius: 4px;
+      z-index: -1;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       FEATURES — dark green section
+    ════════════════════════════════════════════════════════════════ */
+    .features {
+      background: var(--clr-green);
+      padding: var(--section-pad) clamp(1.25rem,4vw,2.5rem);
+    }
+    .features__inner { max-width: var(--max-w); margin: 0 auto; }
+
+    .features__header {
+      display: grid; gap: 2rem; align-items: end;
+      margin-bottom: clamp(2.5rem,5vw,4.5rem);
+    }
+    @media (min-width: 768px) {
+      .features__header { grid-template-columns: 1fr 1fr; }
+    }
+    .features__title { color: var(--clr-white); }
+
+    .features__grid {
+      display: grid; gap: 1.5px;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.06);
+      border-radius: 4px; overflow: hidden;
+    }
+    @media (min-width: 560px)  { .features__grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .features__grid { grid-template-columns: repeat(4,1fr); } }
+
+    .feature-card {
+      background: var(--clr-green);
+      padding: clamp(1.75rem,3.5vw,2.75rem);
+      position: relative; overflow: hidden;
+      transition: background var(--t);
+    }
+    .feature-card:hover { background: var(--clr-green-lt); }
+    .feature-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: var(--clr-gold);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.42s cubic-bezier(0.4,0,0.2,1);
+    }
+    .feature-card:hover::before { transform: scaleX(1); }
+
+    .feature-card__icon {
+      width: 42px; height: 42px;
+      margin-bottom: 1.75rem;
+      color: var(--clr-gold);
+    }
+    .feature-card__icon svg { width: 100%; height: 100%; }
+
+    .feature-card__num {
+      position: absolute; top: 1rem; right: 1.25rem;
+      font-family: var(--font-display); font-size: 3.5rem; line-height: 1;
+      color: rgba(255,255,255,0.07);
+      transition: color var(--t); user-select: none;
+    }
+    .feature-card:hover .feature-card__num { color: rgba(255,176,0,0.15); }
+    .feature-card__title { color: var(--clr-white); margin-bottom: 0.75rem; }
+    .feature-card__desc {
+      font-size: 0.94rem; line-height: 1.7;
+      color: rgba(255,207,157,0.65);
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       STANDORTE — map left + dark sidebar right (like screenshot)
+    ════════════════════════════════════════════════════════════════ */
+    .standorte {
+      display: flex;
+      flex-direction: column;
+      min-height: clamp(500px, 80vh, 740px);
+    }
+    @media (min-width: 860px) {
+      .standorte { flex-direction: row; }
+    }
+
+    /* Left: Leaflet map */
+    .standorte__map-side {
+      flex: 1 1 60%;
+      position: relative;
+      min-height: 320px;
+    }
+    #map { width: 100%; height: 100%; min-height: 320px; }
+
+    /* Right: dark sidebar — matching screenshot aesthetic */
+    .standorte__sidebar {
+      flex: 0 0 clamp(300px, 38%, 440px);
+      background: #1C1A14;
+      display: flex; flex-direction: column;
+      padding: clamp(2rem,4vw,3rem) clamp(1.5rem,3vw,2.5rem);
+      overflow-y: auto;
+    }
+
+    .standorte__sidebar-headline {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      line-height: 0.92;
+      color: var(--clr-gold);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.75rem;
+    }
+    .standorte__sidebar-sub {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: clamp(0.72rem, 1.2vw, 0.85rem);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: rgba(255,207,157,0.55);
+      margin-bottom: 1.25rem;
+    }
+    .standorte__sidebar-desc {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: rgba(255,207,157,0.6);
+      margin-bottom: 1.75rem;
+    }
+
+    /* Search field */
+    .standorte__search-wrap {
+      position: relative;
+      margin-bottom: 1.75rem;
+    }
+    .standorte__search {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,207,157,0.15);
+      border-radius: 3px;
+      padding: 0.82rem 3rem 0.82rem 1rem;
+      color: rgba(255,207,157,0.8);
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      transition: border-color var(--t), box-shadow var(--t);
+    }
+    .standorte__search::placeholder { color: rgba(255,207,157,0.3); }
+    .standorte__search:focus {
+      outline: none;
+      border-color: var(--clr-gold);
+      box-shadow: 0 0 0 3px rgba(255,176,0,0.1);
+    }
+    .standorte__search-icon {
+      position: absolute; right: 0.9rem; top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,207,157,0.35);
+      pointer-events: none;
+      width: 18px; height: 18px;
+    }
+
+    /* Location cards list in sidebar */
+    .location-list {
+      display: flex; flex-direction: column; gap: 0.75rem;
+      flex: 1;
+    }
+    .location-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,207,157,0.1);
+      border-left: 3px solid transparent;
+      border-radius: 3px;
+      padding: 1rem 1.1rem;
+      display: flex; flex-direction: column; gap: 0.25rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background var(--t), border-left-color var(--t), transform var(--t);
+    }
+    .location-card:hover {
+      background: rgba(255,176,0,0.07);
+      border-left-color: var(--clr-gold);
+      transform: translateX(3px);
+    }
+    .location-card--coming {
+      opacity: 0.45; cursor: default;
+      border-style: dashed; border-left-style: dashed;
+    }
+    .location-card--coming:hover {
+      background: rgba(255,255,255,0.03);
+      border-left-color: transparent;
+      transform: none;
+    }
+    .location-card__badge {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--clr-gold); margin-bottom: 0.1rem;
+    }
+    .location-card__name {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em;
+      color: rgba(255,245,220,0.92);
+    }
+    .location-card__address {
+      font-size: 0.82rem; line-height: 1.5;
+      color: rgba(255,207,157,0.5);
+    }
+    .location-card__nav {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      margin-top: 0.5rem;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--clr-gold);
+      transition: color var(--t);
+    }
+    .location-card__nav:hover { color: var(--clr-gold-dk); }
+
+    /* Leaflet overrides */
+    .leaflet-container { background: #e8e4c8; }
+    .leaflet-control-zoom a {
+      background: var(--clr-white) !important;
+      color: var(--clr-green) !important;
+      border-color: rgba(0,66,37,0.2) !important;
+      font-weight: 700;
+    }
+    .leaflet-control-zoom a:hover {
+      background: var(--clr-beige-dk) !important;
+      color: var(--clr-green-dk) !important;
+    }
+    .leaflet-control-attribution {
+      background: rgba(245,245,220,0.9) !important;
+      color: var(--clr-text-light) !important;
+      font-size: 0.7rem !important;
+    }
+    .leaflet-control-attribution a { color: var(--clr-green) !important; }
+
+    /* Custom popup */
+    .leaflet-popup-content-wrapper {
+      background: var(--clr-green) !important;
+      border-radius: 4px !important;
+      box-shadow: 0 4px 28px rgba(0,66,37,0.3) !important;
+      color: var(--clr-white) !important;
+      padding: 0 !important;
+    }
+    .leaflet-popup-content { margin: 0 !important; }
+    .leaflet-popup-tip { background: var(--clr-green) !important; }
+    .leaflet-popup-close-button {
+      color: rgba(255,255,255,0.6) !important;
+      top: 6px !important; right: 8px !important;
+    }
+    .popup-inner {
+      padding: 1rem 1.1rem;
+      display: flex; flex-direction: column; gap: 0.25rem;
+    }
+    .popup-type {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.13em;
+      color: var(--clr-gold);
+    }
+    .popup-name {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--clr-white);
+    }
+    .popup-addr { font-size: 0.78rem; color: rgba(255,207,157,0.7); margin-top: 0.1rem; }
+
+    /* ════════════════════════════════════════════════════════════════
+       FÜR LÄDEN — green section
+    ════════════════════════════════════════════════════════════════ */
+    .fuer-laeden { background: var(--clr-green-dk); }
+    .fuer-laeden__inner { max-width: var(--max-w); margin: 0 auto; }
+
+    .fuer-laeden__layout {
+      display: grid; gap: clamp(3rem,6vw,6rem);
+      align-items: start; margin-top: 3rem;
+    }
+    @media (min-width: 1024px) {
+      .fuer-laeden__layout { grid-template-columns: 1fr 1.25fr; }
+    }
+
+    .fuer-laeden .section-tag { color: var(--clr-gold); }
+    .fuer-laeden .section-tag::before { background: var(--clr-gold); }
+    .fuer-laeden__title { color: var(--clr-white); margin-bottom: 1.25rem; }
+    .fuer-laeden__title span { color: var(--clr-gold); }
+    .fuer-laeden__body { color: rgba(255,207,157,0.7); }
+
+    .pitch-list {
+      display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem;
+    }
+    .pitch-list li {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.55;
+    }
+    .pitch-list li::before {
+      content: '→'; color: var(--clr-gold);
+      font-family: var(--font-display); font-size: 1rem;
+      flex-shrink: 0; margin-top: 0.02em;
+    }
+
+    /* Form */
+    .inquiry-form {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px;
+      padding: clamp(1.75rem,4vw,3rem);
+    }
+    .inquiry-form__title { color: var(--clr-white); margin-bottom: 2rem; }
+    .form-row { display: grid; gap: 1rem; margin-bottom: 1rem; }
+    @media (min-width: 640px) { .form-row { grid-template-columns: 1fr 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .form-label {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.13em;
+      color: rgba(255,207,157,0.55);
+    }
+    .form-input {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 2px; padding: 0.75rem 1rem;
+      color: var(--clr-white);
+      font-family: var(--font-body); font-size: 0.95rem;
+      width: 100%;
+      transition: border-color var(--t), box-shadow var(--t);
+    }
+    .form-input::placeholder { color: rgba(255,255,255,0.2); }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--clr-gold);
+      box-shadow: 0 0 0 3px rgba(255,176,0,0.12);
+    }
+    .form-select { cursor: pointer; -webkit-appearance: none; appearance: none; }
+    .form-textarea { resize: vertical; min-height: 110px; }
+    .form-footer {
+      display: flex; flex-wrap: wrap; align-items: center;
+      justify-content: space-between; gap: 1rem; margin-top: 1.5rem;
+    }
+    .form-note { font-size: 0.72rem; color: rgba(255,207,157,0.3); }
+    .form-success {
+      margin-top: 1.25rem; padding: 1rem 1.25rem;
+      background: rgba(33,166,20,0.12); border: 1px solid rgba(33,166,20,0.3);
+      border-radius: 3px; color: #6dde60;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.88rem; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       KONTAKT — beige section
+    ════════════════════════════════════════════════════════════════ */
+    .kontakt { background: var(--clr-beige-dk); }
+    .kontakt__grid {
+      display: grid; gap: clamp(2.5rem,5vw,5rem); align-items: start;
+    }
+    @media (min-width: 1024px) { .kontakt__grid { grid-template-columns: 1fr 1fr; } }
+    .kontakt__title { color: var(--clr-green); margin-bottom: 1rem; }
+    .kontakt__intro { color: var(--clr-text-light); max-width: 45ch; }
+
+    .kontakt__details { display: flex; flex-direction: column; gap: 2rem; }
+    .kontakt-item { display: flex; flex-direction: column; gap: 0.25rem; }
+    .kontakt-item__type { color: var(--clr-gold-dk); font-size: 0.63rem; }
+    .kontakt-item__value {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: clamp(1.1rem,2vw,1.5rem);
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--clr-green);
+      transition: color var(--t);
+    }
+    a.kontakt-item__value:hover { color: var(--clr-gold-dk); }
+
+    /* ════════════════════════════════════════════════════════════════
+       FOOTER
+    ════════════════════════════════════════════════════════════════ */
+    .footer {
+      background: var(--clr-green-dk);
+      border-top: 3px solid var(--clr-gold);
+      padding: clamp(2rem,4vw,3.5rem) clamp(1.25rem,4vw,2.5rem);
+    }
+    .footer__inner {
+      max-width: var(--max-w); margin: 0 auto;
+      display: flex; flex-wrap: wrap;
+      gap: 2rem; align-items: center; justify-content: space-between;
+    }
+    .footer__brand { display: flex; align-items: center; gap: 1rem; }
+    .footer__brand img {
+      height: 52px; width: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.9;
+    }
+    .footer__tagline { color: var(--clr-gold); font-size: 0.68rem; }
+    .footer__nav { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .footer__nav a {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.4); transition: color var(--t);
+    }
+    .footer__nav a:hover { color: var(--clr-gold); }
+    .footer__legal {
+      display: flex; flex-wrap: wrap; gap: 1.25rem;
+      align-items: center; font-size: 0.72rem;
+      color: rgba(255,255,255,0.25);
+    }
+    .footer__legal a { color: rgba(255,255,255,0.35); transition: color var(--t); }
+    .footer__legal a:hover { color: var(--clr-gold); }
+  </style>
+</head>
+<body>
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════════════ -->
+  <header class="navbar" id="navbar">
+    <div class="navbar__inner">
+      <a href="#" class="navbar__logo" aria-label="Vithout — Startseite">
+        <img src="logo.png" alt="Vithout" width="40" height="60" />
+      </a>
+      <nav class="navbar__nav" id="main-nav" aria-label="Hauptnavigation">
+        <ul class="navbar__links">
+          <li><a href="#produkt">Produkt</a></li>
+          <li><a href="#besonderheiten">Besonderheiten</a></li>
+          <li><a href="#standorte">Wo erhältlich</a></li>
+          <li><a href="#fuer-laeden">Für Läden</a></li>
+          <li><a href="#kontakt">Kontakt</a></li>
+        </ul>
+      </nav>
+      <button class="navbar__hamburger" id="hamburger"
+              aria-label="Menü öffnen" aria-expanded="false" aria-controls="main-nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ══ HERO ══════════════════════════════════════════════════════ -->
+    <section class="hero" id="hero" aria-label="Vithout — Pflanzliches Döner-Fleisch">
+
+      <!-- Background photo -->
+      <div class="hero__bg" aria-hidden="true">
+        <img src="flyer-bg.png" alt="" loading="eager" />
+      </div>
+
+      <!-- Centered content -->
+      <div class="hero__content">
+
+        <a href="#" class="hero__logo" aria-label="Vithout Logo">
+          <img src="logo.png" alt="Vithout" />
+        </a>
+
+        <p class="hero__eyebrow label reveal">100% Pflanzlich · Aarau, Schweiz</p>
+
+        <h1 class="hero__headline h-display reveal" data-delay="1">
+          VITHOUT<br>
+          <span class="hero__headline-accent">IST DIE</span><br>
+          ALTERNATIVE.
+        </h1>
+
+        <p class="hero__tagline reveal" data-delay="2">
+          <span>Frisch.</span>
+          <span>Lokal.</span>
+          <span>Vithout.</span>
+        </p>
+
+        <p class="hero__desc body-lg reveal" data-delay="3">
+          Pflanzliches Döner-Fleisch auf Seitanbasis — ohne Kompromisse.
+          Hergestellt in Aarau für Restaurants und alle, die etwas wirklich Gutes suchen.
+        </p>
+
+        <div class="hero__ctas reveal" data-delay="4">
+          <a href="#standorte" class="btn btn--gold">Wo erhältlich</a>
+          <a href="#fuer-laeden" class="btn btn--outline-white">Für Läden &amp; Partner</a>
+        </div>
+      </div>
+
+      <div class="hero__scroll" aria-hidden="true">
+        <span>Scroll</span>
+        <div class="hero__scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- ══ PRODUKT ════════════════════════════════════════════════════ -->
+    <section class="produkt section" id="produkt">
+      <div class="container">
+        <div class="produkt__inner">
+          <div>
+            <div class="section-tag reveal" style="color:var(--clr-green-mid);">
+              <span style="background:var(--clr-green-mid);"></span>
+              01 — Produkt
+            </div>
+            <h2 class="h-xl produkt__title reveal" data-delay="1">
+              Pflanzliches<br>
+              <span>Döner-Fleisch.</span><br>
+              Neu gedacht.
+            </h2>
+            <div class="produkt__body reveal" data-delay="2">
+              <p class="body-lg">
+                Vithout ist handgefertigter Seitan, der die Textur, den Geschmack
+                und das Erlebnis von klassischem Döner- und Kebabfleisch pflanzlich
+                neu interpretiert.
+              </p>
+              <p class="body-lg">
+                Entwickelt für anspruchsvolle Küchen — hergestellt in Aarau
+                aus sorgfältig ausgewählten Zutaten. Würzig, saftig, überzeugend.
+              </p>
+              <div class="pill-row">
+                <span class="pill">100% Vegan</span>
+                <span class="pill">Kein Soja</span>
+                <span class="pill">Lokal produziert</span>
+                <span class="pill">Frisch geliefert</span>
+                <span class="pill">Handgefertigt</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="produkt__visual reveal" data-delay="2">
+            <div class="produkt__img-wrap">
+              <img src="flyer-bg.png"
+                   alt="Vithout Seitan-Kebab — saftig und appetitlich"
+                   loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PHOTO STRIP ════════════════════════════════════════════════ -->
+    <div class="photo-strip" aria-hidden="true">
+      <img src="flyer-bg.png" alt="" loading="lazy" />
+      <div class="photo-strip__overlay">
+        <p class="photo-strip__text">FRISCH. LOKAL. <em>VITHOUT.</em></p>
+      </div>
+    </div>
+
+    <!-- ══ BESONDERHEITEN ════════════════════════════════════════════ -->
+    <section class="features" id="besonderheiten">
+      <div class="features__inner">
+        <div class="features__header">
+          <div>
+            <div class="section-tag reveal" style="color:var(--clr-gold);">
+              <span style="background:var(--clr-gold);"></span>
+              02 — Besonderheiten
+            </div>
+            <h2 class="h-xl features__title reveal" data-delay="1">
+              Was Vithout<br>auszeichnet.
+            </h2>
+          </div>
+          <p class="body-lg reveal" data-delay="2"
+             style="color:rgba(255,207,157,0.65); align-self:end; padding-bottom:0.25rem;">
+            Qualität, Geschmack und Überzeugung — in jedem Bissen.
+          </p>
+        </div>
+
+        <div class="features__grid">
+
+          <article class="feature-card reveal" data-delay="1">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 42C24 42 9 31 9 19C9 11.8 15.8 6 24 6C32.2 6 39 11.8 39 19C39 31 24 42 24 42Z"
+                      stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M24 6L24 42" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <path d="M24 22C21 18 15 18 13 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M24 28C27 24 33 24 35 26" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="feature-card__num" aria-hidden="true">01</div>
+            <h3 class="feature-card__title h-lg">Pflanzlich</h3>
+            <p class="feature-card__desc">100% vegan, ohne tierische Produkte. Gut für dich — und für die Umwelt.</p>
+          </article>
+
+          <article class="feature-card reveal" data-delay="2">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="24,4 29,18 44,18 32,28 37,42 24,33 11,42 16,28 4,18 19,18"
+                         stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="feature-card__num" aria-hidden="true">02</div>
+            <h3 class="feature-card__title h-lg">Hochwertig</h3>
+            <p class="feature-card__desc">Handwerklich hergestellt aus selektierten Zutaten. Keine Kompromisse.</p>
+          </article>
+
+          <article class="feature-card reveal" data-delay="3">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 30C8 18 16 8 24 8C32 8 40 18 40 30" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M14 38C14 33 18.5 29 24 29C29.5 29 34 33 34 38" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="24" cy="39" r="3.5" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="feature-card__num" aria-hidden="true">03</div>
+            <h3 class="feature-card__title h-lg">Geschmackvoll</h3>
+            <p class="feature-card__desc">Würzig, saftig, überzeugende Textur — pflanzlich wie nie zuvor erlebt.</p>
+          </article>
+
+          <article class="feature-card reveal" data-delay="4">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 36 L24 8 L36 36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 28 L32 28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="24" cy="42" r="2.5" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="feature-card__num" aria-hidden="true">04</div>
+            <h3 class="feature-card__title h-lg">Modern</h3>
+            <p class="feature-card__desc">Zeitgemässe Antwort auf eine wachsende Nachfrage. Das nächste Level.</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ STANDORTE ════════════════════════════════════════════════ -->
+    <section class="standorte" id="standorte">
+
+      <!-- Left: Leaflet map -->
+      <div class="standorte__map-side">
+        <div id="map" aria-label="Karte mit allen Vithout-Standorten" role="region"></div>
+      </div>
+
+      <!-- Right: dark sidebar (matching screenshot) -->
+      <aside class="standorte__sidebar">
+        <h2 class="standorte__sidebar-headline">FRISCH.<br>LOKAL.<br>VITHOUT.</h2>
+        <p class="standorte__sidebar-sub">Alle Vithout Standorte.</p>
+        <p class="standorte__sidebar-desc">
+          Finde hier alle Kebab-Läden und Gastro-Betriebe in der Schweiz,
+          die unseren veganen Seitan-Kebab anbieten.
+        </p>
+
+        <!-- Search field -->
+        <div class="standorte__search-wrap">
+          <input type="search" class="standorte__search" id="loc-search"
+                 placeholder="Stadt oder PLZ suchen..."
+                 aria-label="Standorte nach Stadt oder PLZ filtern" />
+          <svg class="standorte__search-icon" viewBox="0 0 20 20" fill="none"
+               xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M13 13L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Location cards — clickable, open Google Maps navigation -->
+        <div class="location-list" id="location-list">
+
+          <article class="location-card" data-lat="47.3919" data-lng="8.0447"
+                   data-city="aarau" data-name="bistro brotkorb"
+                   tabindex="0" role="button">
+            <span class="location-card__badge">Bistro</span>
+            <strong class="location-card__name">Bistro Brotkorb</strong>
+            <address class="location-card__address">Metzgergasse 22, Aarau</address>
+            <a class="location-card__nav"
+               href="https://www.google.com/maps/dir/?api=1&destination=Metzgergasse+22,+5000+Aarau"
+               target="_blank" rel="noopener noreferrer"
+               onclick="event.stopPropagation()"
+               aria-label="Navigation zu Bistro Brotkorb öffnen">
+              ↗ Navigation öffnen
+            </a>
+          </article>
+
+          <article class="location-card location-card--coming" tabindex="-1">
+            <span class="location-card__badge">Demnächst</span>
+            <strong class="location-card__name">Neuer Standort</strong>
+            <address class="location-card__address">Weitere Partner in Planung</address>
+            <a class="location-card__nav" href="#fuer-laeden"
+               onclick="event.stopPropagation()">+ Partner werden</a>
+          </article>
+
+          <article class="location-card location-card--coming" tabindex="-1">
+            <span class="location-card__badge">Demnächst</span>
+            <strong class="location-card__name">Ihr Betrieb?</strong>
+            <address class="location-card__address">Jetzt Anfrage stellen</address>
+            <a class="location-card__nav" href="#fuer-laeden"
+               onclick="event.stopPropagation()">+ Anfrage stellen</a>
+          </article>
+
+        </div>
+      </aside>
+    </section>
+
+    <!-- ══ FÜR LÄDEN ════════════════════════════════════════════════ -->
+    <section class="fuer-laeden section" id="fuer-laeden">
+      <div class="fuer-laeden__inner">
+        <div class="section-tag reveal">04 — Für Läden &amp; Restaurants</div>
+
+        <div class="fuer-laeden__layout">
+          <div class="reveal">
+            <h2 class="h-xl fuer-laeden__title">
+              Bieten Sie Ihren<br>Gästen <span>mehr.</span>
+            </h2>
+            <p class="body-lg fuer-laeden__body" style="margin-top:1.25rem;">
+              Sie führen ein Restaurant, Bistro, Döner- oder Kebab-Laden?
+              Werden Sie Vithout-Partner und erweitern Sie Ihr Angebot mit dem
+              überzeugendsten pflanzlichen Döner-Fleisch der Schweiz.
+            </p>
+            <ul class="pitch-list">
+              <li>Frische, regelmäßige Lieferungen nach Aarau und Umgebung</li>
+              <li>Flexible Mengen — kein Mindestbestellwert</li>
+              <li>Exklusives Produkt für Ihre Region</li>
+              <li>Persönliche Beratung und Verkostung möglich</li>
+              <li>Direkte Zusammenarbeit mit dem Hersteller</li>
+            </ul>
+          </div>
+
+          <div class="reveal" data-delay="2">
+            <form class="inquiry-form" id="inquiry-form" novalidate>
+              <h3 class="h-lg inquiry-form__title">Jetzt anfragen</h3>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="f-name">Name *</label>
+                  <input class="form-input" type="text" id="f-name" name="name"
+                         placeholder="Vorname Nachname" required autocomplete="name" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="f-business">Betrieb *</label>
+                  <input class="form-input" type="text" id="f-business" name="business"
+                         placeholder="Name des Restaurants / Ladens" required />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="f-email">E-Mail *</label>
+                  <input class="form-input" type="email" id="f-email" name="email"
+                         placeholder="name@betrieb.ch" required autocomplete="email" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="f-phone">Telefon</label>
+                  <input class="form-input" type="tel" id="f-phone" name="phone"
+                         placeholder="+41 79 000 00 00" autocomplete="tel" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="f-type">Art des Betriebs</label>
+                <select class="form-input form-select" id="f-type" name="type">
+                  <option value="">Bitte wählen</option>
+                  <option value="restaurant">Restaurant</option>
+                  <option value="bistro">Bistro / Café</option>
+                  <option value="kebab">Döner / Kebab-Laden</option>
+                  <option value="deli">Feinkostladen</option>
+                  <option value="catering">Catering</option>
+                  <option value="other">Anderes</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="f-message">Nachricht</label>
+                <textarea class="form-input form-textarea" id="f-message" name="message"
+                          rows="4"
+                          placeholder="Ihre Fragen, gewünschte Mengen, Ihr Interesse..."></textarea>
+              </div>
+
+              <div class="form-footer">
+                <p class="form-note">* Pflichtfelder. Ihre Daten werden nicht weitergegeben.</p>
+                <button type="submit" class="btn btn--gold">Anfrage senden</button>
+              </div>
+
+              <div class="form-success" id="form-success" hidden aria-live="polite">
+                ✓ Danke! Wir melden uns innerhalb von 24 Stunden bei Ihnen.
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ KONTAKT ══════════════════════════════════════════════════ -->
+    <section class="kontakt section" id="kontakt">
+      <div class="container">
+        <div class="section-tag reveal" style="color:var(--clr-green-mid);">
+          <span style="background:var(--clr-green-mid);"></span>
+          05 — Kontakt
+        </div>
+        <div class="kontakt__grid">
+          <div class="reveal">
+            <h2 class="h-xl kontakt__title">Direkt in Kontakt.</h2>
+            <p class="body-lg kontakt__intro" style="margin-top:1rem;">
+              Fragen zum Produkt, zur Zusammenarbeit oder zur Presse?
+              Schreiben Sie uns direkt — wir freuen uns.
+            </p>
+          </div>
+          <div class="kontakt__details reveal" data-delay="2">
+            <div class="kontakt-item">
+              <span class="label kontakt-item__type">E-Mail</span>
+              <a href="mailto:hallo@vithout.ch" class="kontakt-item__value">hallo@vithout.ch</a>
+            </div>
+            <div class="kontakt-item">
+              <span class="label kontakt-item__type">Instagram</span>
+              <a href="https://instagram.com/vithout" target="_blank" rel="noopener noreferrer"
+                 class="kontakt-item__value">@vithout</a>
+            </div>
+            <div class="kontakt-item">
+              <span class="label kontakt-item__type">Standort</span>
+              <span class="kontakt-item__value">Aarau · Aargau · Schweiz</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══ FOOTER ══════════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <img src="logo.png" alt="Vithout" height="52" width="35" />
+        <span class="footer__tagline label">Frisch. Lokal. Vithout.</span>
+      </div>
+      <nav class="footer__nav" aria-label="Footer Navigation">
+        <a href="#produkt">Produkt</a>
+        <a href="#besonderheiten">Besonderheiten</a>
+        <a href="#standorte">Standorte</a>
+        <a href="#fuer-laeden">Für Läden</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+      <div class="footer__legal">
+        <span>&copy; 2025 Vithout, Aarau</span>
+        <a href="#">Impressum</a>
+        <a href="#">Datenschutz</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══ SCRIPTS ══════════════════════════════════════════════════════ -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLEg=" crossorigin=""></script>
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── Navbar scroll state ──────────────────────────────────────── */
+    var navbar = document.getElementById('navbar');
+    function onScroll() {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* ── Mobile hamburger ─────────────────────────────────────────── */
+    var hamburger = document.getElementById('hamburger');
+    var mainNav   = document.getElementById('main-nav');
+
+    function closeNav() {
+      mainNav.classList.remove('open');
+      hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('nav-open');
+    }
+    hamburger.addEventListener('click', function () {
+      var isOpen = mainNav.classList.toggle('open');
+      hamburger.classList.toggle('active', isOpen);
+      hamburger.setAttribute('aria-expanded', String(isOpen));
+      document.body.classList.toggle('nav-open', isOpen);
+    });
+    mainNav.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', closeNav);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeNav();
+    });
+
+    /* ── Scroll-reveal ────────────────────────────────────────────── */
+    var revealEls = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+      revealEls.forEach(function (el) { io.observe(el); });
+    } else {
+      revealEls.forEach(function (el) { el.classList.add('revealed'); });
+    }
+
+    /* ── Inquiry form ─────────────────────────────────────────────── */
+    var form        = document.getElementById('inquiry-form');
+    var formSuccess = document.getElementById('form-success');
+    if (form) {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        /*
+          Backend hier eintragen, z.B.:
+          fetch('/api/inquiry', { method: 'POST', body: new FormData(form) })
+        */
+        form.style.display = 'none';
+        formSuccess.hidden = false;
+      });
+    }
+
+    /* ── Leaflet Map ──────────────────────────────────────────────── */
+    var map = L.map('map', {
+      center: [47.3925, 8.0432],
+      zoom: 14,
+      zoomControl: true,
+      scrollWheelZoom: false,
+      attributionControl: true,
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+      maxZoom: 19,
+    }).addTo(map);
+
+    /* Green+gold marker pin */
+    var pinIcon = L.divIcon({
+      className: '',
+      html: '<svg viewBox="0 0 32 44" xmlns="http://www.w3.org/2000/svg" width="32" height="44">'
+          + '<path d="M16 0C7.163 0 0 7.163 0 16c0 11.5 14.25 26.25 15.3 27.35a1 1 0 001.4 0C17.75 42.25 32 27.5 32 16 32 7.163 24.837 0 16 0z" fill="#004225"/>'
+          + '<circle cx="16" cy="16" r="7" fill="#F5F5DC"/>'
+          + '<circle cx="16" cy="16" r="3.5" fill="#FFB000"/>'
+          + '</svg>',
+      iconSize:    [32, 44],
+      iconAnchor:  [16, 44],
+      popupAnchor: [0, -46],
+    });
+
+    var locations = [
+      { name: 'Bistro Brotkorb', address: 'Metzgergasse 22, 5000 Aarau', lat: 47.3919, lng: 8.0447, type: 'Bistro' },
+    ];
+
+    var markers = {};
+    locations.forEach(function (loc) {
+      var popup = L.popup({ closeButton: true, maxWidth: 240 })
+        .setContent(
+          '<div class="popup-inner">'
+          + '<span class="popup-type">' + loc.type + '</span>'
+          + '<strong class="popup-name">' + loc.name + '</strong>'
+          + '<span class="popup-addr">' + loc.address + '</span>'
+          + '<a href="https://www.google.com/maps/dir/?api=1&destination='
+          + encodeURIComponent(loc.address)
+          + '" target="_blank" rel="noopener" style="display:block;margin-top:0.6rem;'
+          + 'font-family:var(--font-heading);font-weight:700;font-size:0.72rem;'
+          + 'text-transform:uppercase;letter-spacing:0.1em;color:#FFB000;">↗ Navigation öffnen</a>'
+          + '</div>'
+        );
+      var m = L.marker([loc.lat, loc.lng], { icon: pinIcon, title: loc.name })
+        .addTo(map)
+        .bindPopup(popup);
+      markers[loc.name] = m;
+    });
+
+    /* Card click → fly map to location + open popup */
+    document.querySelectorAll('.location-card[data-lat]').forEach(function (card) {
+      function fly() {
+        var lat = parseFloat(card.dataset.lat);
+        var lng = parseFloat(card.dataset.lng);
+        var name = card.querySelector('.location-card__name');
+        var key = name ? name.textContent.trim() : '';
+        map.flyTo([lat, lng], 16, { animate: true, duration: 1 });
+        if (markers[key]) {
+          setTimeout(function () { markers[key].openPopup(); }, 1100);
+        }
+        /* Scroll to section on mobile (sidebar stacks below map) */
+        if (window.innerWidth < 860) {
+          var top = document.getElementById('standorte').getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+        }
+      }
+      card.addEventListener('click', fly);
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fly(); }
+      });
+    });
+
+    /* Search filter — show/hide cards by city/name */
+    var searchInput = document.getElementById('loc-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        var q = this.value.toLowerCase().trim();
+        document.querySelectorAll('.location-card').forEach(function (card) {
+          if (card.classList.contains('location-card--coming')) return;
+          var city = (card.dataset.city || '').toLowerCase();
+          var name = (card.dataset.name || '').toLowerCase();
+          card.style.display = (!q || city.includes(q) || name.includes(q)) ? '' : 'none';
+        });
+      });
+    }
+
+  })();
+  </script>
+
+</body>
+</html>
