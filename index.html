@@ -6,6 +6,38 @@
   <title>Vithout — Pflanzliches Döner-Fleisch aus Aarau</title>
   <meta name="description" content="Vithout ist die pflanzliche Alternative zu Kebab und Döner-Fleisch. Handgefertigter Seitan aus Aarau — frisch, lokal, überzeugend." />
   <meta name="theme-color" content="#004225" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://[DOMAIN]" />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://[DOMAIN]" />
+  <meta property="og:title"       content="Vithout — Pflanzliches Döner-Fleisch aus Aarau" />
+  <meta property="og:description" content="Das handgefertigte, pflanzliche Döner-Fleisch aus der Schweiz. Seitan-Kebab aus Aarau — frisch, lokal, überzeugend." />
+  <meta property="og:image"       content="https://[DOMAIN]/flyer-bg.png" />
+  <meta property="og:locale"      content="de_CH" />
+  <meta name="twitter:card"       content="summary_large_image" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Vithout",
+    "description": "Handgefertigtes, pflanzliches Döner-Fleisch auf Seitanbasis aus Aarau, Schweiz.",
+    "url": "https://[DOMAIN]",
+    "email": "hallo@vithout.ch",
+    "sameAs": ["https://instagram.com/vithout"],
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Aarau",
+      "addressRegion": "AG",
+      "addressCountry": "CH"
+    },
+    "servesCuisine": ["Vegan", "Vegetarian"],
+    "priceRange": "$$"
+  }
+  </script>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,8 +45,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
 
   <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin="" />
 
   <style>
     /* ── Brand palette (from SKILL.md) ───────────────────────────── */
@@ -443,6 +474,7 @@
       align-items: center;
       padding: clamp(2rem,5vw,4rem) clamp(1.25rem,5vw,4rem);
       max-width: 900px;
+      overflow: hidden;
     }
 
     /* Large logo centered in hero */
@@ -517,7 +549,7 @@
     .hero__leaf-deco {
       position: absolute;
       right: 4%;
-      top: 12%;
+      top: 11%;
       width: clamp(80px, 12vw, 200px);
       z-index: 1;
       animation: leafSway 9s ease-in-out infinite;
@@ -726,7 +758,6 @@
     .standorte {
       display: flex;
       flex-direction: column;
-      min-height: clamp(500px, 80vh, 740px);
     }
     @media (min-width: 860px) {
       .standorte { flex-direction: row; }
@@ -735,10 +766,17 @@
     /* Left: Leaflet map */
     .standorte__map-side {
       flex: 1 1 60%;
-      position: relative;
-      min-height: 320px;
+      display: flex;
+      flex-direction: column;
     }
-    #map { width: 100%; height: 100%; min-height: 320px; }
+    #map {
+      flex: 1;
+      width: 100%;
+      min-height: 420px;
+    }
+    @media (max-width: 859px) {
+      #map { min-height: 340px; }
+    }
 
     /* Right: dark sidebar — matching screenshot aesthetic */
     .standorte__sidebar {
@@ -977,7 +1015,42 @@
       border-color: var(--clr-gold);
       box-shadow: 0 0 0 3px rgba(255,176,0,0.12);
     }
-    .form-select { cursor: pointer; -webkit-appearance: none; appearance: none; }
+    .form-select {
+      cursor: pointer; -webkit-appearance: none; appearance: none;
+      background: rgba(255,255,255,0.03);
+      border-color: rgba(255,255,255,0.08);
+    }
+    .form-select option { background: var(--clr-green-dk); color: var(--clr-white); }
+
+    /* ── Custom Select (Art des Betriebs) ──────────────────────── */
+    .cs-wrap { position: relative; }
+    .cs-trigger {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 2px;
+      padding: .75rem 1rem; color: var(--clr-white);
+      font-family: var(--font-body); font-size: .95rem;
+      cursor: pointer; text-align: left;
+      transition: border-color var(--t), box-shadow var(--t);
+    }
+    .cs-trigger:focus { outline: none; border-color: var(--clr-gold); box-shadow: 0 0 0 3px rgba(255,176,0,.12); }
+    .cs-trigger[aria-expanded="true"] { border-color: var(--clr-gold); }
+    .cs-placeholder { color: rgba(255,255,255,.2); }
+    .cs-chevron { width: 14px; height: 14px; color: rgba(255,255,255,.3); flex-shrink: 0; transition: transform .22s ease; }
+    .cs-trigger[aria-expanded="true"] .cs-chevron { transform: rotate(180deg); }
+    .cs-list {
+      display: none; position: absolute; left: 0; right: 0; top: calc(100% + 3px);
+      background: var(--clr-green-dk); border: 1px solid rgba(255,176,0,.4);
+      list-style: none; padding: .3rem 0; z-index: 400;
+      box-shadow: 0 8px 28px rgba(0,0,0,.55);
+    }
+    .cs-list.open { display: block; }
+    .cs-opt {
+      padding: .72rem 1rem; font-family: var(--font-body); font-size: .95rem;
+      color: rgba(255,255,255,.85); cursor: pointer;
+      transition: background .1s ease;
+    }
+    .cs-opt:hover { background: rgba(255,255,255,.1); }
+    .cs-opt[aria-selected="true"] { color: var(--clr-gold); }
     .form-textarea { resize: vertical; min-height: 110px; }
     .form-footer {
       display: flex; flex-wrap: wrap; align-items: center;
@@ -1049,6 +1122,136 @@
     }
     .footer__legal a { color: rgba(255,255,255,0.35); transition: color var(--t); }
     .footer__legal a:hover { color: var(--clr-gold); }
+
+    /* ════════════════════════════════════════════════════════════════
+       UNSERE GESCHICHTE — beige, 2-col editorial
+    ════════════════════════════════════════════════════════════════ */
+    .geschichte { background: var(--clr-beige); }
+    .geschichte__inner { max-width: var(--max-w); margin: 0 auto; }
+    .geschichte__layout {
+      display: grid; gap: clamp(3rem, 6vw, 5rem);
+      align-items: center; margin-top: 2.5rem;
+    }
+    @media (min-width: 860px) {
+      .geschichte__layout { grid-template-columns: 1.1fr 0.9fr; }
+    }
+    .geschichte__title { color: var(--clr-green); }
+    .geschichte__title span { color: var(--clr-gold-dk); }
+    .geschichte__quote {
+      font-family: var(--font-heading); font-weight: 900;
+      font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+      line-height: 1.35; text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--clr-green);
+      padding-left: 1.25rem;
+      border-left: 3px solid var(--clr-gold);
+      margin: 1.5rem 0;
+    }
+    .geschichte__body { color: var(--clr-text-light); margin-top: 0.25rem; }
+    .geschichte__visual {
+      aspect-ratio: 4/5; border-radius: 6px;
+      background: rgba(0,66,37,0.06);
+      border: 2px dashed rgba(0,66,37,0.2);
+      display: flex; align-items: center; justify-content: center;
+      min-height: 260px;
+    }
+    .geschichte__visual-placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--clr-green); opacity: 0.35; text-align: center; padding: 2rem;
+    }
+    .geschichte__visual-placeholder svg { width: 40px; height: 40px; }
+
+    /* ════════════════════════════════════════════════════════════════
+       STIMMEN — dark green, 3-col testimonials
+    ════════════════════════════════════════════════════════════════ */
+    .stimmen { background: var(--clr-green-dk); }
+    .stimmen__inner { max-width: var(--max-w); margin: 0 auto; }
+    .stimmen__header { margin-bottom: 2.5rem; }
+    .stimmen__title { color: var(--clr-white); }
+    .stimmen__subtitle {
+      color: rgba(255,207,157,0.6); margin-top: 0.75rem;
+      font-size: clamp(0.95rem, 1.3vw, 1.05rem); line-height: 1.7; max-width: 52ch;
+    }
+    .stimmen__grid { display: grid; gap: 1.5rem; }
+    @media (min-width: 640px) { .stimmen__grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .stimmen__grid { grid-template-columns: repeat(3, 1fr); } }
+    .testimonial-card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 10px;
+      padding: clamp(1.5rem, 3vw, 2rem);
+      display: flex; flex-direction: column; gap: 1rem;
+      transition: background var(--t), transform 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    .testimonial-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-3px); }
+    .testimonial-card--placeholder {
+      opacity: 0.35; border-style: dashed; cursor: default;
+    }
+    .testimonial-card--placeholder:hover { transform: none; background: rgba(255,255,255,0.05); }
+    .testimonial-card__quote-mark {
+      font-family: var(--font-display); font-size: 3.5rem; line-height: 1;
+      color: var(--clr-gold); opacity: 0.55; user-select: none;
+    }
+    .testimonial-card__text {
+      font-size: clamp(0.88rem, 1.2vw, 0.98rem); line-height: 1.75;
+      color: rgba(255,255,255,0.75); font-style: italic; flex: 1;
+    }
+    .testimonial-card__author {
+      border-top: 1px solid rgba(255,255,255,0.09); padding-top: 0.9rem;
+    }
+    .testimonial-card__name {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--clr-white);
+    }
+    .testimonial-card__business { font-size: 0.72rem; color: rgba(255,207,157,0.45); margin-top: 0.1rem; }
+
+    /* ════════════════════════════════════════════════════════════════
+       FAQ — beige accordion
+    ════════════════════════════════════════════════════════════════ */
+    .faq { background: var(--clr-beige-dk); }
+    .faq__inner { max-width: 800px; margin: 0 auto; }
+    .faq__title { color: var(--clr-green); }
+    .faq__intro {
+      color: var(--clr-text-light); max-width: 50ch;
+      margin-top: 0.75rem; margin-bottom: 2rem;
+      font-size: clamp(0.95rem, 1.3vw, 1.05rem); line-height: 1.7;
+    }
+    .faq__list { margin-top: 2rem; }
+    .faq-item { border-bottom: 1px solid rgba(0,66,37,0.12); }
+    .faq-item:first-child { border-top: 1px solid rgba(0,66,37,0.12); }
+    .faq-item__trigger {
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      width: 100%; padding: 1.3rem 0; background: none; border: none;
+      cursor: pointer; text-align: left;
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--clr-green); transition: color var(--t);
+    }
+    .faq-item__trigger:hover { color: var(--clr-green-mid); }
+    .faq-item__trigger[aria-expanded="true"] { color: var(--clr-gold-dk); }
+    .faq-item__icon {
+      flex-shrink: 0; width: 20px; height: 20px; color: var(--clr-gold-dk);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .faq-item__trigger[aria-expanded="true"] .faq-item__icon { transform: rotate(45deg); }
+    .faq-item__body {
+      overflow: hidden; max-height: 0;
+      transition: max-height 0.38s cubic-bezier(0.4,0,0.2,1), padding 0.28s ease;
+    }
+    .faq-item__body.open { max-height: 300px; padding-bottom: 1.25rem; }
+    .faq-item__body p {
+      font-size: clamp(0.9rem, 1.2vw, 0.98rem); line-height: 1.8;
+      color: var(--clr-text-light);
+      padding-left: 1rem; border-left: 2px solid var(--clr-gold);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .faq-item__body { transition: none; }
+      .faq-item__icon { transition: none; }
+    }
   </style>
 </head>
 <body>
@@ -1090,27 +1293,34 @@
         <div class="hero__orb hero__orb--3"></div>
       </div>
 
-      <!-- Decorative leaf SVG -->
-      <svg class="hero__leaf-deco" viewBox="0 0 180 280" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M90 15 Q140 65 140 140 Q140 215 90 265 Q40 215 40 140 Q40 65 90 15Z"
-              fill="none" stroke="rgba(255,255,255,0.045)" stroke-width="1.2"/>
-        <path d="M90 15 L90 265" stroke="rgba(255,255,255,0.03)" stroke-width="0.8"/>
-        <path d="M90 75 Q112 90 130 85" stroke="rgba(255,255,255,0.03)" stroke-width="0.7" fill="none"/>
-        <path d="M90 115 Q68 130 50 125" stroke="rgba(255,255,255,0.03)" stroke-width="0.7" fill="none"/>
-        <path d="M90 155 Q112 170 130 165" stroke="rgba(255,255,255,0.03)" stroke-width="0.7" fill="none"/>
-        <path d="M90 195 Q68 210 50 205" stroke="rgba(255,255,255,0.03)" stroke-width="0.7" fill="none"/>
-      </svg>
-
       <!-- Centered content -->
       <div class="hero__content">
 
-        <p class="hero__eyebrow label">100% Pflanzlich · Aarau, Schweiz</p>
+        <p class="hero__eyebrow label">100% Pflanzlich</p>
 
-        <h1 class="hero__headline h-display">
-          VITHOUT<br>
-          <span class="hero__headline-accent">IST DIE</span><br>
-          ALTERNATIVE.
-        </h1>
+        <!-- Headline + leaf together so leaf always tracks text size/position -->
+        <div class="hero__headline-wrap">
+          <h1 class="hero__headline h-display">
+            VITHOUT<br>
+            <span class="hero__headline-accent">IST DIE</span><br>
+            ALTERNATIVE.
+          </h1>
+          <svg class="hero__leaf-deco" viewBox="0 0 180 280" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <radialGradient id="lg1" cx="50%" cy="40%" r="52%">
+                <stop offset="0%"   stop-color="#c0ffe0" stop-opacity="0.22"/>
+                <stop offset="100%" stop-color="#00b050" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <path d="M90 15 Q140 65 140 140 Q140 215 90 265 Q40 215 40 140 Q40 65 90 15Z"
+                  fill="url(#lg1)" stroke="rgba(155,255,190,0.55)" stroke-width="1.3"/>
+            <path d="M90 15 L90 265" stroke="rgba(155,255,190,0.38)" stroke-width="0.9" fill="none"/>
+            <path d="M90 75  Q112 90  130 85"  stroke="rgba(155,255,190,0.35)" stroke-width="0.75" fill="none"/>
+            <path d="M90 115 Q68  130 50  125" stroke="rgba(155,255,190,0.35)" stroke-width="0.75" fill="none"/>
+            <path d="M90 155 Q112 170 130 165" stroke="rgba(155,255,190,0.3)"  stroke-width="0.7"  fill="none"/>
+            <path d="M90 195 Q68  210 50  205" stroke="rgba(155,255,190,0.3)"  stroke-width="0.7"  fill="none"/>
+          </svg>
+        </div>
 
         <p class="hero__tagline">
           <span>Frisch.</span>
@@ -1132,6 +1342,41 @@
       <div class="hero__scroll" aria-hidden="true">
         <span>Scroll</span>
         <div class="hero__scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- ══ UNSERE GESCHICHTE ════════════════════════════════════════ -->
+    <section class="geschichte section" id="geschichte">
+      <div class="geschichte__inner">
+        <div class="section-tag reveal" style="color:var(--clr-green-mid);">
+          <span style="background:var(--clr-green-mid);"></span>
+          — Unsere Geschichte
+        </div>
+        <div class="geschichte__layout">
+          <div>
+            <h2 class="h-xl geschichte__title reveal" data-delay="1">
+              Warum es<br><span>Vithout</span><br>gibt.
+            </h2>
+            <blockquote class="geschichte__quote reveal" data-delay="2">
+              [GRÜNDERSTORY — HIER EUREN KERNSATZ / SLOGAN EINFÜGEN]
+            </blockquote>
+            <p class="body-lg geschichte__body reveal" data-delay="3">
+              [Hier kommt eure Geschichte — warum Vithout entstanden ist, was euch antreibt
+              und was ihr mit diesem Produkt in der Welt bewegen wollt.
+              Diesen Platzhaltertext einfach im Code ersetzen.]
+            </p>
+          </div>
+          <div class="geschichte__visual reveal" data-delay="2" aria-hidden="true">
+            <div class="geschichte__visual-placeholder">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="6" y="6" width="36" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
+                <circle cx="18" cy="19" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 34L15 24L22 31L31 21L42 34" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Foto folgt
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1299,11 +1544,11 @@
         <div class="location-list" id="location-list">
 
           <article class="location-card" data-lat="47.3919" data-lng="8.0447"
-                   data-city="aarau" data-name="bistro brotkorb"
+                   data-city="aarau" data-name="bistro brotkorb" data-zip="5000"
                    tabindex="0" role="button">
             <span class="location-card__badge">Bistro</span>
             <strong class="location-card__name">Bistro Brotkorb</strong>
-            <address class="location-card__address">Metzgergasse 22, Aarau</address>
+            <address class="location-card__address">Metzgergasse 22, 5000 Aarau</address>
             <a class="location-card__nav"
                href="https://www.google.com/maps/dir/?api=1&destination=Metzgergasse+22,+5000+Aarau"
                target="_blank" rel="noopener noreferrer"
@@ -1331,6 +1576,53 @@
 
         </div>
       </aside>
+    </section>
+
+    <!-- ══ STIMMEN ════════════════════════════════════════════════════ -->
+    <section class="stimmen section" id="stimmen">
+      <div class="stimmen__inner">
+        <div class="section-tag reveal">03 — Stimmen</div>
+        <div class="stimmen__header">
+          <h2 class="h-xl stimmen__title reveal" data-delay="1">Was unsere<br>Partner sagen.</h2>
+          <p class="body-lg stimmen__subtitle reveal" data-delay="2">
+            Restaurants und Gastronomen aus der Region über ihre Erfahrungen mit Vithout.
+          </p>
+        </div>
+        <div class="stimmen__grid">
+
+          <article class="testimonial-card reveal" data-delay="1">
+            <div class="testimonial-card__quote-mark" aria-hidden="true">"</div>
+            <p class="testimonial-card__text">
+              [ZITAT VOM PARTNER — hier eine echte Aussage eines Restaurant- oder Bistro-Partners eintragen.]
+            </p>
+            <div class="testimonial-card__author">
+              <p class="testimonial-card__name">[NAME]</p>
+              <p class="testimonial-card__business">[RESTAURANTNAME], Aarau</p>
+            </div>
+          </article>
+
+          <article class="testimonial-card reveal" data-delay="2">
+            <div class="testimonial-card__quote-mark" aria-hidden="true">"</div>
+            <p class="testimonial-card__text">
+              [ZITAT VOM PARTNER — hier eine zweite Aussage eintragen.]
+            </p>
+            <div class="testimonial-card__author">
+              <p class="testimonial-card__name">[NAME]</p>
+              <p class="testimonial-card__business">[RESTAURANTNAME], [ORT]</p>
+            </div>
+          </article>
+
+          <article class="testimonial-card testimonial-card--placeholder reveal" data-delay="3" aria-hidden="true">
+            <div class="testimonial-card__quote-mark">"</div>
+            <p class="testimonial-card__text">Weitere Stimmen unserer Partner folgen bald.</p>
+            <div class="testimonial-card__author">
+              <p class="testimonial-card__name">Demnächst</p>
+              <p class="testimonial-card__business">Weiterer Partner in Planung</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
     </section>
 
     <!-- ══ FÜR LÄDEN ════════════════════════════════════════════════ -->
@@ -1388,16 +1680,26 @@
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="f-type">Art des Betriebs</label>
-                <select class="form-input form-select" id="f-type" name="type">
-                  <option value="">Bitte wählen</option>
-                  <option value="restaurant">Restaurant</option>
-                  <option value="bistro">Bistro / Café</option>
-                  <option value="kebab">Döner / Kebab-Laden</option>
-                  <option value="deli">Feinkostladen</option>
-                  <option value="catering">Catering</option>
-                  <option value="other">Anderes</option>
-                </select>
+                <label class="form-label" for="f-type-btn">Art des Betriebs</label>
+                <div class="cs-wrap">
+                  <button type="button" class="cs-trigger" id="f-type-btn"
+                          aria-haspopup="listbox" aria-expanded="false">
+                    <span class="cs-value cs-placeholder">Bitte wählen</span>
+                    <svg class="cs-chevron" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                  <ul class="cs-list" role="listbox" aria-label="Art des Betriebs">
+                    <li class="cs-opt" data-value="" role="option">Bitte wählen</li>
+                    <li class="cs-opt" data-value="restaurant" role="option">Restaurant</li>
+                    <li class="cs-opt" data-value="bistro" role="option">Bistro / Café</li>
+                    <li class="cs-opt" data-value="kebab" role="option">Döner / Kebab-Laden</li>
+                    <li class="cs-opt" data-value="deli" role="option">Feinkostladen</li>
+                    <li class="cs-opt" data-value="catering" role="option">Catering</li>
+                    <li class="cs-opt" data-value="other" role="option">Anderes</li>
+                  </ul>
+                  <input type="hidden" id="f-type" name="type" value="" />
+                </div>
               </div>
 
               <div class="form-group">
@@ -1421,12 +1723,89 @@
       </div>
     </section>
 
+    <!-- ══ FAQ ════════════════════════════════════════════════════════ -->
+    <section class="faq section" id="faq">
+      <div class="faq__inner">
+        <div class="section-tag reveal" style="color:var(--clr-green-mid);">
+          <span style="background:var(--clr-green-mid);"></span>
+          05 — FAQ
+        </div>
+        <h2 class="h-xl faq__title reveal" data-delay="1">Häufige<br>Fragen.</h2>
+        <p class="body-lg faq__intro reveal" data-delay="2">
+          Antworten auf die häufigsten Fragen zu Vithout — für Privatpersonen und Gastronomie.
+        </p>
+        <div class="faq__list reveal" data-delay="3">
+
+          <div class="faq-item">
+            <button class="faq-item__trigger" aria-expanded="false" aria-controls="faq-a1">
+              Wo kann ich Vithout kaufen?
+              <svg class="faq-item__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="faq-item__body" id="faq-a1" role="region">
+              <p>Aktuell ist Vithout im Bistro Brotkorb (Metzgergasse 22, Aarau) erhältlich. Weitere Standorte sind in Planung — folge uns auf Instagram oder melde dich direkt bei uns.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__trigger" aria-expanded="false" aria-controls="faq-a2">
+              Ist Vithout für Menschen mit Glutenunverträglichkeit geeignet?
+              <svg class="faq-item__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="faq-item__body" id="faq-a2" role="region">
+              <p>Vithout basiert auf Seitan, der aus Weizengluten hergestellt wird. Das Produkt ist daher nicht für Menschen mit Zöliakie oder Glutenunverträglichkeit geeignet. Bei Fragen zu Allergenen melde dich direkt bei uns.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__trigger" aria-expanded="false" aria-controls="faq-a3">
+              Wie wird Vithout zubereitet?
+              <svg class="faq-item__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="faq-item__body" id="faq-a3" role="region">
+              <p>Vithout lässt sich genauso wie klassisches Döner-Fleisch zubereiten — auf dem Spieß, in der Pfanne oder im Ofen. Das Produkt wird frisch geliefert und ist kühl zu lagern. Für detaillierte Zubereitungshinweise wende dich an uns.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__trigger" aria-expanded="false" aria-controls="faq-a4">
+              Gibt es einen Mindestbestellwert für Restaurants?
+              <svg class="faq-item__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="faq-item__body" id="faq-a4" role="region">
+              <p>Nein — bei Vithout gibt es keinen Mindestbestellwert. Wir liefern flexible Mengen nach Bedarf, damit sich auch kleinere Betriebe unkompliziert eindecken können. Einfach Anfrage stellen und wir besprechen alles persönlich.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-item__trigger" aria-expanded="false" aria-controls="faq-a5">
+              In welche Regionen wird geliefert?
+              <svg class="faq-item__icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="faq-item__body" id="faq-a5" role="region">
+              <p>Aktuell beliefern wir Betriebe in Aarau und der näheren Umgebung (Kanton Aargau). Liegt dein Standort ausserhalb des Liefergebiets, melde dich trotzdem — wir prüfen jeden Fall individuell.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- ══ KONTAKT ══════════════════════════════════════════════════ -->
     <section class="kontakt section" id="kontakt">
       <div class="container">
         <div class="section-tag reveal" style="color:var(--clr-green-mid);">
           <span style="background:var(--clr-green-mid);"></span>
-          05 — Kontakt
+          06 — Kontakt
         </div>
         <div class="kontakt__grid">
           <div class="reveal">
@@ -1469,19 +1848,19 @@
         <a href="#besonderheiten">Besonderheiten</a>
         <a href="#standorte">Standorte</a>
         <a href="#fuer-laeden">Für Läden</a>
+        <a href="#faq">FAQ</a>
         <a href="#kontakt">Kontakt</a>
       </nav>
       <div class="footer__legal">
-        <span>&copy; 2025 Vithout, Aarau</span>
-        <a href="#">Impressum</a>
-        <a href="#">Datenschutz</a>
+        <span>&copy; 2026 Vithout, Aarau</span>
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
       </div>
     </div>
   </footer>
 
   <!-- ══ SCRIPTS ══════════════════════════════════════════════════════ -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLEg=" crossorigin=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin=""></script>
   <script>
   (function () {
     'use strict';
@@ -1589,6 +1968,9 @@
       { name: 'Bistro Brotkorb', address: 'Metzgergasse 22, 5000 Aarau', lat: 47.3919, lng: 8.0447, type: 'Bistro' },
     ];
 
+    setTimeout(function () { map.invalidateSize(); }, 50);
+    window.addEventListener('resize', function () { map.invalidateSize(); });
+
     var markers = {};
     locations.forEach(function (loc) {
       var popup = L.popup({ closeButton: true, maxWidth: 240 })
@@ -1633,20 +2015,82 @@
       });
     });
 
-    /* Search filter — show/hide cards by city/name */
+    /* Search filter — show/hide cards by city/name/zip */
     var searchInput = document.getElementById('loc-search');
     if (searchInput) {
       searchInput.addEventListener('input', function () {
         var q = this.value.toLowerCase().trim();
         document.querySelectorAll('.location-card').forEach(function (card) {
-          if (card.classList.contains('location-card--coming')) return;
+          if (card.classList.contains('location-card--coming')) {
+            card.style.display = q ? 'none' : '';
+            return;
+          }
           var city = (card.dataset.city || '').toLowerCase();
           var name = (card.dataset.name || '').toLowerCase();
-          card.style.display = (!q || city.includes(q) || name.includes(q)) ? '' : 'none';
+          var zip  = (card.dataset.zip  || '').toLowerCase();
+          var match = !q || city.includes(q) || name.includes(q) || zip.includes(q);
+          card.style.display = match ? '' : 'none';
         });
       });
     }
 
+    /* ── FAQ accordion ─────────────────────────────────────────── */
+    document.querySelectorAll('.faq-item__trigger').forEach(function (trigger) {
+      trigger.addEventListener('click', function () {
+        var isOpen = this.getAttribute('aria-expanded') === 'true';
+        var bodyId = this.getAttribute('aria-controls');
+        var body   = document.getElementById(bodyId);
+        document.querySelectorAll('.faq-item__trigger').forEach(function (t) {
+          t.setAttribute('aria-expanded', 'false');
+          var b = document.getElementById(t.getAttribute('aria-controls'));
+          if (b) b.classList.remove('open');
+        });
+        if (!isOpen && body) {
+          this.setAttribute('aria-expanded', 'true');
+          body.classList.add('open');
+        }
+      });
+    });
+
+  })();
+  </script>
+
+  <script>
+  (function () {
+    var wrap    = document.querySelector('.cs-wrap');
+    if (!wrap) return;
+    var trigger = wrap.querySelector('.cs-trigger');
+    var valueEl = wrap.querySelector('.cs-value');
+    var list    = wrap.querySelector('.cs-list');
+    var opts    = wrap.querySelectorAll('.cs-opt');
+    var hidden  = document.getElementById('f-type');
+
+    function openList()  { trigger.setAttribute('aria-expanded','true');  list.classList.add('open'); }
+    function closeList() { trigger.setAttribute('aria-expanded','false'); list.classList.remove('open'); }
+
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      list.classList.contains('open') ? closeList() : openList();
+    });
+
+    opts.forEach(function (opt) {
+      opt.addEventListener('click', function (e) {
+        e.stopPropagation();
+        valueEl.textContent = this.textContent;
+        valueEl.classList.remove('cs-placeholder');
+        if (hidden) hidden.value = this.getAttribute('data-value') || '';
+        opts.forEach(function (o) { o.removeAttribute('aria-selected'); });
+        this.setAttribute('aria-selected', 'true');
+        closeList();
+      });
+    });
+
+    document.addEventListener('click', closeList);
+
+    trigger.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { closeList(); }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); list.classList.contains('open') ? closeList() : openList(); }
+    });
   })();
   </script>
 
