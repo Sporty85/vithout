@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vithout — Pflanzliches Döner-Fleisch aus Aarau</title>
-  <meta name="description" content="Vithout ist die pflanzliche Alternative zu Kebab und Döner-Fleisch. Handgefertigter Seitan aus Aarau — frisch, lokal, überzeugend." />
+  <title>Vithout — Pflanzlicher Dönergenuss aus der Schweiz</title>
+  <meta name="description" content="Vithout ist die pflanzliche Alternative zu Kebab und Döner-Fleisch. Handgefertigter Seitan aus der Schweiz — frisch, lokal, überzeugend." />
   <meta name="theme-color" content="#004225" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://[DOMAIN]" />
@@ -12,9 +12,9 @@
   <!-- Open Graph -->
   <meta property="og:type"        content="website" />
   <meta property="og:url"         content="https://[DOMAIN]" />
-  <meta property="og:title"       content="Vithout — Pflanzliches Döner-Fleisch aus Aarau" />
-  <meta property="og:description" content="Das handgefertigte, pflanzliche Döner-Fleisch aus der Schweiz. Seitan-Kebab aus Aarau — frisch, lokal, überzeugend." />
-  <meta property="og:image"       content="https://[DOMAIN]/flyer-bg.png" />
+  <meta property="og:title"       content="Vithout — Pflanzlicher Dönergenuss aus der Schweiz" />
+  <meta property="og:description" content="Der handgefertigte, pflanzliche Dönergenuss aus der Schweiz. Seitan-Kebab aus der Schweiz — frisch, lokal, überzeugend." />
+  <meta property="og:image"       content="https://[DOMAIN]/images/kebab.png" />
   <meta property="og:locale"      content="de_CH" />
   <meta name="twitter:card"       content="summary_large_image" />
 
@@ -24,7 +24,7 @@
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Vithout",
-    "description": "Handgefertigtes, pflanzliches Döner-Fleisch auf Seitanbasis aus Aarau, Schweiz.",
+    "description": "Handgefertigter, pflanzlicher Dönergenuss auf Seitanbasis aus der Schweiz.",
     "url": "https://[DOMAIN]",
     "email": "hallo@vithout.ch",
     "sameAs": ["https://instagram.com/vithout"],
@@ -387,7 +387,7 @@
     }
 
     /* ════════════════════════════════════════════════════════════════
-       HERO — full-width centered, flyer-bg.png background
+       HERO — full-width centered
     ════════════════════════════════════════════════════════════════ */
     .hero {
       position: relative;
@@ -656,9 +656,13 @@
       height: auto;
       display: block;
       mix-blend-mode: multiply;
-      transition: transform 0.8s ease;
+      filter: drop-shadow(0 12px 32px rgba(0,46,26,0.18));
+      transition: transform 0.8s ease, filter 0.8s ease;
     }
-    .produkt__img-wrap:hover img { transform: scale(1.02); }
+    .produkt__img-wrap:hover img {
+      transform: scale(1.03);
+      filter: drop-shadow(0 20px 48px rgba(0,46,26,0.28));
+    }
     .produkt__visual::before,
     .produkt__visual::after { display: none; }
 
@@ -1130,7 +1134,8 @@
     .geschichte__inner { max-width: var(--max-w); margin: 0 auto; }
     .geschichte__layout {
       display: grid; gap: clamp(3rem, 6vw, 5rem);
-      align-items: center; margin-top: 2.5rem;
+      align-items: stretch; margin-top: 2.5rem;
+      min-width: 0; overflow: hidden;
     }
     @media (min-width: 860px) {
       .geschichte__layout { grid-template-columns: 1.1fr 0.9fr; }
@@ -1147,20 +1152,82 @@
       margin: 1.5rem 0;
     }
     .geschichte__body { color: var(--clr-text-light); margin-top: 0.25rem; }
-    .geschichte__visual {
-      aspect-ratio: 4/5; border-radius: 6px;
-      background: rgba(0,66,37,0.06);
-      border: 2px dashed rgba(0,66,37,0.2);
-      display: flex; align-items: center; justify-content: center;
-      min-height: 260px;
-    }
-    .geschichte__visual-placeholder {
-      display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+    .geschichte__body p { margin-bottom: 1rem; line-height: 1.75; }
+    .geschichte__body p:last-child { margin-bottom: 0; }
+    .geschichte__vision {
       font-family: var(--font-heading); font-weight: 700;
-      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.15em;
-      color: var(--clr-green); opacity: 0.35; text-align: center; padding: 2rem;
+      font-size: clamp(1rem, 1.8vw, 1.15rem);
+      color: var(--clr-green); line-height: 1.5;
+      padding-top: 0.5rem;
     }
-    .geschichte__visual-placeholder svg { width: 40px; height: 40px; }
+    .geschichte__visual {
+      min-height: 260px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      width: 100%; overflow: hidden;
+    }
+    .geschichte__gallery {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      width: 100%; min-width: 0;
+    }
+    .geschichte__gallery-item {
+      position: relative; border: none; padding: 0;
+      cursor: pointer; border-radius: 6px; overflow: hidden;
+      aspect-ratio: 1; background: none;
+    }
+    .geschichte__gallery-item img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform 0.4s ease;
+    }
+    .geschichte__gallery-item:hover img { transform: scale(1.08); }
+    .geschichte__gallery-item::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(0,66,37,0);
+      transition: background 0.3s ease;
+    }
+    .geschichte__gallery-item:hover::after { background: rgba(0,66,37,0.15); }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(0,15,8,0.92);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    .lightbox[hidden] { display: none; }
+    .lightbox__inner {
+      max-width: min(90vw, 800px);
+      max-height: 90vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lightbox__inner img {
+      max-width: 100%; max-height: 85vh;
+      border-radius: 8px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+      display: block;
+    }
+    .lightbox__close {
+      position: absolute; top: 1.25rem; right: 1.5rem;
+      background: none; border: none; cursor: pointer;
+      color: var(--clr-white); font-size: 1.75rem; line-height: 1;
+      opacity: 0.75; transition: opacity 0.2s;
+    }
+    .lightbox__close:hover { opacity: 1; }
+    .lightbox__prev, .lightbox__next {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,0.1); border: none; cursor: pointer;
+      color: var(--clr-white); font-size: 2rem; line-height: 1;
+      padding: 0.75rem 1rem; border-radius: 4px;
+      opacity: 0.7; transition: opacity 0.2s, background 0.2s;
+    }
+    .lightbox__prev:hover, .lightbox__next:hover {
+      opacity: 1; background: rgba(255,255,255,0.2);
+    }
+    .lightbox__prev { left: 1rem; }
+    .lightbox__next { right: 1rem; }
 
     /* ════════════════════════════════════════════════════════════════
        STIMMEN — dark green, 3-col testimonials
@@ -1263,7 +1330,7 @@
   <header class="navbar" id="navbar">
     <div class="navbar__inner">
       <a href="#" class="navbar__logo" aria-label="Vithout — Startseite">
-        <img src="logo.png" alt="Vithout" width="40" height="60" />
+        <img src="images/logo.png" alt="Vithout" width="40" height="60" />
       </a>
       <nav class="navbar__nav" id="main-nav" aria-label="Hauptnavigation">
         <ul class="navbar__links">
@@ -1284,7 +1351,7 @@
   <main>
 
     <!-- ══ HERO ══════════════════════════════════════════════════════ -->
-    <section class="hero" id="hero" aria-label="Vithout — Pflanzliches Döner-Fleisch">
+    <section class="hero" id="hero" aria-label="Vithout — Pflanzlicher Dönergenuss">
 
       <!-- Background — CSS gradient + animated orbs -->
       <div class="hero__bg" aria-hidden="true">
@@ -1323,14 +1390,14 @@
         </div>
 
         <p class="hero__tagline">
-          <span>Frisch.</span>
-          <span>Lokal.</span>
+          <span>Würzig.</span>
+          <span>Saftig.</span>
           <span>Vithout.</span>
         </p>
 
         <p class="hero__desc body-lg">
-          Pflanzliches Döner-Fleisch auf Seitanbasis — ohne Kompromisse.
-          Hergestellt in Aarau für Restaurants und alle, die etwas wirklich Gutes suchen.
+          Pflanzlicher Dönergenuss auf Seitanbasis — ohne Kompromisse.
+          Hergestellt in der Schweiz für alle, die etwas wirklich Gutes suchen.
         </p>
 
         <div class="hero__ctas">
@@ -1358,22 +1425,30 @@
               Warum es<br><span>Vithout</span><br>gibt.
             </h2>
             <blockquote class="geschichte__quote reveal" data-delay="2">
-              [GRÜNDERSTORY — HIER EUREN KERNSATZ / SLOGAN EINFÜGEN]
+              Aus Leidenschaft für echten Geschmack. Aus Überzeugung für eine neue Zukunft.
             </blockquote>
-            <p class="body-lg geschichte__body reveal" data-delay="3">
-              [Hier kommt eure Geschichte — warum Vithout entstanden ist, was euch antreibt
-              und was ihr mit diesem Produkt in der Welt bewegen wollt.
-              Diesen Platzhaltertext einfach im Code ersetzen.]
-            </p>
+            <div class="body-lg geschichte__body reveal" data-delay="3">
+              <p>Es begann in einer kleinen Küche, mit unzähligen Experimenten, viel Hingabe und einer einfachen Frage: Warum gibt es kaum pflanzliche Alternativen, die wirklich überzeugen?</p>
+              <p>Eigentlich wollte ich am Anfang einfach nur für mich selbst einen richtig guten Döner-Ersatz entwickeln. Etwas, das saftig, würzig und befriedigend ist — nicht einfach nur „eine vegane Option".</p>
+              <p>Also begann ich zu experimentieren. Mit sorgfältig abgestimmten Gewürzen, verschiedenen Rezepturen und dem Anspruch, einen Geschmack zu erschaffen, der Menschen überrascht.</p>
+              <p>Was als persönliches Experiment begann, wurde Schritt für Schritt zu Vithout. Handgemacht, ehrlich und entwickelt für alle, die bewusst essen möchten, ohne auf echten Genuss zu verzichten.</p>
+              <p class="geschichte__vision">Vithout ist mehr als nur pflanzliches Food.<br>Es ist unsere Vision einer neuen Generation von Geschmack.</p>
+            </div>
           </div>
-          <div class="geschichte__visual reveal" data-delay="2" aria-hidden="true">
-            <div class="geschichte__visual-placeholder">
-              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="6" y="6" width="36" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
-                <circle cx="18" cy="19" r="3.5" stroke="currentColor" stroke-width="1.5"/>
-                <path d="M6 34L15 24L22 31L31 21L42 34" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Foto folgt
+          <div class="geschichte__visual reveal" data-delay="2">
+            <div class="geschichte__gallery">
+              <button class="geschichte__gallery-item" data-src="images/geschichte1.png" aria-label="Foto 1 vergrössern">
+                <img src="images/geschichte1.png" alt="Vithout Herstellung 1" loading="lazy" />
+              </button>
+              <button class="geschichte__gallery-item" data-src="images/geschichte2.png" aria-label="Foto 2 vergrössern">
+                <img src="images/geschichte2.png" alt="Vithout Herstellung 2" loading="lazy" />
+              </button>
+              <button class="geschichte__gallery-item" data-src="images/geschichte3.png" aria-label="Foto 3 vergrössern">
+                <img src="images/geschichte3.png" alt="Vithout Herstellung 3" loading="lazy" />
+              </button>
+              <button class="geschichte__gallery-item" data-src="images/geschichte4.png" aria-label="Foto 4 vergrössern">
+                <img src="images/geschichte4.png" alt="Vithout Herstellung 4" loading="lazy" />
+              </button>
             </div>
           </div>
         </div>
@@ -1401,12 +1476,11 @@
                 neu interpretiert.
               </p>
               <p class="body-lg">
-                Entwickelt für anspruchsvolle Küchen — hergestellt in Aarau
+                Entwickelt für anspruchsvolle Küchen — hergestellt in der Schweiz
                 aus sorgfältig ausgewählten Zutaten. Würzig, saftig, überzeugend.
               </p>
               <div class="pill-row">
                 <span class="pill">100% Vegan</span>
-                <span class="pill">Kein Soja</span>
                 <span class="pill">Lokal produziert</span>
                 <span class="pill">Frisch geliefert</span>
                 <span class="pill">Handgefertigt</span>
@@ -1416,7 +1490,7 @@
 
           <div class="produkt__visual reveal" data-delay="2">
             <div class="produkt__img-wrap">
-              <img src="flyer-bg.png"
+              <img src="images/kebab.png"
                    alt="Vithout Seitan-Kebab — saftig und appetitlich"
                    loading="lazy" />
             </div>
@@ -1427,9 +1501,9 @@
 
     <!-- ══ PHOTO STRIP ════════════════════════════════════════════════ -->
     <div class="photo-strip" aria-hidden="true">
-      <img src="strip-bg.png" alt="" loading="lazy" />
+      <img src="images/strip-bg.png" alt="" loading="lazy" />
       <div class="photo-strip__overlay">
-        <p class="photo-strip__text">FRISCH. LOKAL. <em>VITHOUT.</em></p>
+        <p class="photo-strip__text">WÜRZIG. SAFTIG. <em>VITHOUT.</em></p>
       </div>
     </div>
 
@@ -1521,7 +1595,7 @@
 
       <!-- Right: dark sidebar (matching screenshot) -->
       <aside class="standorte__sidebar">
-        <h2 class="standorte__sidebar-headline">FRISCH.<br>LOKAL.<br>VITHOUT.</h2>
+        <h2 class="standorte__sidebar-headline">WÜRZIG.<br>SAFTIG.<br>VITHOUT.</h2>
         <p class="standorte__sidebar-sub">Alle Vithout Standorte.</p>
         <p class="standorte__sidebar-desc">
           Finde hier alle Kebab-Läden und Gastro-Betriebe in der Schweiz,
@@ -1546,7 +1620,7 @@
           <article class="location-card" data-lat="47.3919" data-lng="8.0447"
                    data-city="aarau" data-name="bistro brotkorb" data-zip="5000"
                    tabindex="0" role="button">
-            <span class="location-card__badge">Bistro</span>
+            <span class="location-card__badge">Döner / Kebab-Laden</span>
             <strong class="location-card__name">Bistro Brotkorb</strong>
             <address class="location-card__address">Metzgergasse 22, 5000 Aarau</address>
             <a class="location-card__nav"
@@ -1558,12 +1632,34 @@
             </a>
           </article>
 
-          <article class="location-card location-card--coming" tabindex="-1">
-            <span class="location-card__badge">Demnächst</span>
-            <strong class="location-card__name">Neuer Standort</strong>
-            <address class="location-card__address">Weitere Partner in Planung</address>
-            <a class="location-card__nav" href="#fuer-laeden"
-               onclick="event.stopPropagation()">+ Partner werden</a>
+          <article class="location-card" data-lat="47.3974" data-lng="8.0083"
+                   data-city="erlinsbach" data-name="best kebab" data-zip="5015"
+                   tabindex="0" role="button">
+            <span class="location-card__badge">Döner / Kebab-Laden</span>
+            <strong class="location-card__name">Best Kebab</strong>
+            <address class="location-card__address">Schmiedengasse, 5015 Erlinsbach</address>
+            <a class="location-card__nav"
+               href="https://www.google.com/maps/dir/?api=1&destination=Best+Kebab+Schmiedengasse+5015+Erlinsbach"
+               target="_blank" rel="noopener noreferrer"
+               onclick="event.stopPropagation()"
+               aria-label="Navigation zu Best Kebab öffnen">
+              ↗ Navigation öffnen
+            </a>
+          </article>
+
+          <article class="location-card" data-lat="47.3689" data-lng="8.0448"
+                   data-city="unterentfelden" data-name="life point unterentfelden" data-zip="5035"
+                   tabindex="0" role="button">
+            <span class="location-card__badge">Döner / Kebab-Laden</span>
+            <strong class="location-card__name">Life Point Unterentfelden</strong>
+            <address class="location-card__address">Hauptstrasse 56, 5035 Unterentfelden</address>
+            <a class="location-card__nav"
+               href="https://www.google.com/maps/dir/?api=1&destination=Hauptstrasse+56,+5035+Unterentfelden"
+               target="_blank" rel="noopener noreferrer"
+               onclick="event.stopPropagation()"
+               aria-label="Navigation zu Life Point Unterentfelden öffnen">
+              ↗ Navigation öffnen
+            </a>
           </article>
 
           <article class="location-card location-card--coming" tabindex="-1">
@@ -1638,7 +1734,7 @@
             <p class="body-lg fuer-laeden__body" style="margin-top:1.25rem;">
               Sie führen ein Restaurant, Bistro, Döner- oder Kebab-Laden?
               Werden Sie Vithout-Partner und erweitern Sie Ihr Angebot mit dem
-              überzeugendsten pflanzlichen Döner-Fleisch der Schweiz.
+              überzeugendsten pflanzlichen Dönergenuss der Schweiz.
             </p>
             <ul class="pitch-list">
               <li>Frische, regelmäßige Lieferungen nach Aarau und Umgebung</li>
@@ -1744,7 +1840,7 @@
               </svg>
             </button>
             <div class="faq-item__body" id="faq-a1" role="region">
-              <p>Aktuell ist Vithout im Bistro Brotkorb (Metzgergasse 22, Aarau) erhältlich. Weitere Standorte sind in Planung — folge uns auf Instagram oder melde dich direkt bei uns.</p>
+              <p>Vithout ist aktuell an drei Standorten erhältlich: im Bistro Brotkorb (Metzgergasse 22, Aarau), bei Best Kebab (Schmiedengasse, Erlinsbach) und im Life Point Unterentfelden (Hauptstrasse 56, Unterentfelden). Weitere Standorte sind in Planung — folge uns auf Instagram oder melde dich direkt bei uns.</p>
             </div>
           </div>
 
@@ -1768,7 +1864,7 @@
               </svg>
             </button>
             <div class="faq-item__body" id="faq-a3" role="region">
-              <p>Vithout lässt sich genauso wie klassisches Döner-Fleisch zubereiten — auf dem Spieß, in der Pfanne oder im Ofen. Das Produkt wird frisch geliefert und ist kühl zu lagern. Für detaillierte Zubereitungshinweise wende dich an uns.</p>
+              <p>Vithout lässt sich in der Pfanne oder im Ofen zubereiten. Das Produkt wird frisch geliefert und ist kühl zu lagern. Für detaillierte Zubereitungshinweise wende dich an uns.</p>
             </div>
           </div>
 
@@ -1827,7 +1923,7 @@
             </div>
             <div class="kontakt-item">
               <span class="label kontakt-item__type">Standort</span>
-              <span class="kontakt-item__value">Aarau · Aargau · Schweiz</span>
+              <span class="kontakt-item__value">Aargau · Schweiz</span>
             </div>
           </div>
         </div>
@@ -1840,8 +1936,8 @@
   <footer class="footer">
     <div class="footer__inner">
       <div class="footer__brand">
-        <img src="logo.png" alt="Vithout" height="52" width="35" />
-        <span class="footer__tagline label">Frisch. Lokal. Vithout.</span>
+        <img src="images/logo.png" alt="Vithout" height="52" width="35" />
+        <span class="footer__tagline label">Würzig. Saftig. Vithout.</span>
       </div>
       <nav class="footer__nav" aria-label="Footer Navigation">
         <a href="#produkt">Produkt</a>
@@ -1852,7 +1948,7 @@
         <a href="#kontakt">Kontakt</a>
       </nav>
       <div class="footer__legal">
-        <span>&copy; 2026 Vithout, Aarau</span>
+        <span>&copy; 2026 Vithout, Schweiz</span>
         <a href="impressum.html">Impressum</a>
         <a href="datenschutz.html">Datenschutz</a>
       </div>
@@ -1939,8 +2035,8 @@
 
     /* ── Leaflet Map ──────────────────────────────────────────────── */
     var map = L.map('map', {
-      center: [47.3925, 8.0432],
-      zoom: 14,
+      center: [47.382, 8.030],
+      zoom: 12,
       zoomControl: true,
       scrollWheelZoom: false,
       attributionControl: true,
@@ -1966,6 +2062,8 @@
 
     var locations = [
       { name: 'Bistro Brotkorb', address: 'Metzgergasse 22, 5000 Aarau', lat: 47.3919, lng: 8.0447, type: 'Bistro' },
+      { name: 'Best Kebab', address: 'Schmiedengasse, 5015 Erlinsbach', lat: 47.3974, lng: 8.0083, type: 'Döner' },
+      { name: 'Life Point Unterentfelden', address: 'Hauptstrasse 56, 5035 Unterentfelden', lat: 47.3689, lng: 8.0448, type: 'Lokal' },
     ];
 
     setTimeout(function () { map.invalidateSize(); }, 50);
@@ -2090,6 +2188,52 @@
     trigger.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') { closeList(); }
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); list.classList.contains('open') ? closeList() : openList(); }
+    });
+  })();
+  </script>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Bildansicht" hidden>
+    <button class="lightbox__close" id="lightbox-close" aria-label="Schliessen">&#x2715;</button>
+    <button class="lightbox__prev" id="lightbox-prev" aria-label="Vorheriges Bild">&#8249;</button>
+    <button class="lightbox__next" id="lightbox-next" aria-label="Nächstes Bild">&#8250;</button>
+    <div class="lightbox__inner">
+      <img id="lightbox-img" src="" alt="" />
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var items = Array.from(document.querySelectorAll('.geschichte__gallery-item'));
+    var lightbox = document.getElementById('lightbox');
+    var img = document.getElementById('lightbox-img');
+    var current = 0;
+
+    function open(i) {
+      current = i;
+      img.src = items[i].dataset.src;
+      img.alt = items[i].querySelector('img').alt;
+      lightbox.hidden = false;
+      document.body.style.overflow = 'hidden';
+      document.getElementById('lightbox-close').focus();
+    }
+    function close() {
+      lightbox.hidden = true;
+      document.body.style.overflow = '';
+    }
+    function prev() { current = (current - 1 + items.length) % items.length; img.src = items[current].dataset.src; }
+    function next() { current = (current + 1) % items.length; img.src = items[current].dataset.src; }
+
+    items.forEach(function (el, i) { el.addEventListener('click', function () { open(i); }); });
+    document.getElementById('lightbox-close').addEventListener('click', close);
+    document.getElementById('lightbox-prev').addEventListener('click', prev);
+    document.getElementById('lightbox-next').addEventListener('click', next);
+    lightbox.addEventListener('click', function (e) { if (e.target === lightbox) close(); });
+    document.addEventListener('keydown', function (e) {
+      if (lightbox.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
     });
   })();
   </script>

@@ -67,7 +67,7 @@
       display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
     }
     .navbar__logo { display: flex; align-items: center; gap: 0.75rem; }
-    .navbar__logo img { height: 36px; width: auto; }
+    .navbar__logo img { height: 36px; width: auto; filter: invert(1); }
     .navbar__back {
       display: inline-flex; align-items: center; gap: 0.5rem;
       font-family: var(--font-heading); font-weight: 700;
@@ -151,7 +151,9 @@
       display: flex; flex-wrap: wrap;
       gap: 1.5rem; align-items: center; justify-content: space-between;
     }
+    .footer__brand { display: flex; align-items: center; gap: 0.75rem; }
     .footer__brand img { height: 28px; width: auto; filter: brightness(0) invert(1); opacity: 0.7; }
+    .footer__tagline { color: var(--clr-gold); font-size: 0.68rem; font-family: var(--font-heading); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
     .footer__legal {
       display: flex; flex-wrap: wrap; gap: 1.25rem;
       font-size: 0.72rem; color: rgba(255,255,255,0.3);
@@ -165,7 +167,7 @@
   <header class="navbar">
     <div class="navbar__inner">
       <a href="index.html" class="navbar__logo" aria-label="Zurück zur Startseite">
-        <img src="logo.png" alt="Vithout" width="35" height="52" />
+        <img src="images/logo.png" alt="Vithout" width="35" height="52" />
       </a>
       <a href="index.html" class="navbar__back">
         <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -265,10 +267,11 @@
   <footer class="footer">
     <div class="footer__inner">
       <div class="footer__brand">
-        <img src="logo.png" alt="Vithout" height="28" width="19" />
+        <img src="images/logo.png" alt="Vithout" height="28" width="19" />
+        <span class="footer__tagline">Würzig. Saftig. Vithout.</span>
       </div>
       <div class="footer__legal">
-        <span>&copy; 2026 Vithout, Aarau</span>
+        <span>&copy; 2026 Vithout, Schweiz</span>
         <a href="impressum.html">Impressum</a>
         <a href="datenschutz.html">Datenschutz</a>
       </div>
